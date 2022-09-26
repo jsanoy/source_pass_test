@@ -1,0 +1,50 @@
+USE [testdb]
+GO
+
+/****** Object:  StoredProcedure [dbo].[save_project_task]    Script Date: 9/26/2022 8:17:41 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Name
+-- Create date: 
+-- Description:	
+-- =============================================
+CREATE PROCEDURE [dbo].[save_project_task] 
+	-- Add the parameters for the stored procedure here
+	@projectId int = 0, 
+	@taskTitle varchar(45),
+	@taskDescription varchar(200),
+	@totalEstimate decimal(18,2),
+	@employees varchar(1000)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	declare @task_id int;
+
+	insert into project_task(projectId,taskTitle, taskDescription, totalEstimate) 
+	values (@projectId, @taskTitle, @taskDescription, @totalEstimate);
+
+	select @task_id = SCOPE_IDENTITY();
+
+	insert into task_employees(taskId,employeeId, estimatedHours, actualHours)
+	select @task_id, vt1.empId, min(vt1.actualHours), min(vt1.estimatedHours) from (
+		select  
+		REVERSE(PARSENAME(REPLACE(REVERSE(v0), '|', '.'), 1)) AS empId,
+		REVERSE(PARSENAME(REPLACE(REVERSE(v0), '|', '.'), 2)) AS actualHours,
+		REVERSE(PARSENAME(REPLACE(REVERSE(v0), '|', '.'), 3)) AS estimatedHours
+		from (
+		select value as v0 from string_split(@employees,';')
+
+		) as v cross apply string_split(v0,'|')
+	) as vt1 group by vt1.empId
+
+END
+GO
+

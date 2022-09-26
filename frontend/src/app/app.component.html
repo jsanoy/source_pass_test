@@ -1,0 +1,84 @@
+<div>
+  <h3>Velocity Tracking</h3>
+  <div style="padding:10px">
+
+    <form [formGroup]="editor" (ngSubmit)="save()">
+
+      <h4>Project Details</h4>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <label>Projects</label>
+            </td>
+            <td>
+              <select formControlName="projectId" placeholder="Select Project">
+                <option *ngFor="let i of project_options" [value]="i.id">{{i.projectName}}</option>
+              </select>
+            </td>
+            <td>
+              <label>Task Title</label>
+            </td>
+            <td>
+              <input formControlName="taskTitle" placeholder="Task Title" >
+            </td>
+          </tr>
+          <tr>
+            <td><label>Task Description</label></td>
+            <td colspan="3">
+              <textarea formControlName="taskDescription" style="width: 100%;" placeholder="Manage User Description">
+
+              </textarea>
+            </td>
+          </tr>
+          <tr>
+            <td><label>Total Estimate</label></td>
+            <td>
+              <input formControlName="totalEstimate" placeholder="Total Estimate">
+              <span>{{ total_estimate_validation}}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table >
+        <tbody>
+          <tr *ngFor="let i of employees; let index=index">
+            <td>
+              <label>Employee</label>
+            </td>
+            <td>
+              <select [(ngModel)]="i.employeeId" [ngModelOptions]="{standalone:true}" placeholder="Select Employee">
+                
+                <option *ngFor="let i of employee_options" [value]="i.id">{{i.employeeName}}</option>
+              </select>
+            </td>
+            <td> <label>Estimated Hours</label></td>
+            <td>
+              <input [(ngModel)]="i.estimatedHours" [ngModelOptions]="{standalone:true}" >
+              
+            </td>
+            <td> <label>Actual Hours</label></td>
+
+            <td>
+              <input [(ngModel)]="i.actualHours" [ngModelOptions]="{standalone:true}" >
+            </td>
+            <td>
+              <button (click)="delete(index)">-</button>
+            </td>
+            <td>
+              <button *ngIf="index==employees.length-1" (click)="add()">+</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      
+      <button type="button" (click)="clear()">Close/Clear</button>
+
+      <button type="submit">Save</button>
+
+    </form>
+
+  </div>
+</div>
